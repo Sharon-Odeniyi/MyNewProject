@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+</head>
+<body>
+    <h1>Add Student</h1>
+    <form action="/student_post/" method="post">
+        {% csrf_token %}
+        
+        <table>
+            <tr>
+                <td><b> First Name: </b></td>
+                <td><input type="text" name="firstname" required></td>
+            </tr>
+            <tr>
+                <td><b> Last Name: </b></td>
+                <td><input type="text" name="lastname" required></td>
+            </tr>
+            <tr>
+                <td><b> Matric Number: </b></td>
+                <td><input type="text" name="matric_no" required></td>
+            </tr>
+            <tr>
+                <td><b> Email: </b></td>
+                <td><input type="email" name="email" required></td>
+            </tr>
+           
+            <tr>
+                <td><b> Department: </b></td>
+                <td>
+                    <select name="department" required>
+                        {% for department in departments %}
+                            <option value="{{ department.id }}">{{ department.title }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

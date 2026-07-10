@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">        
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+</head>
+<body>
+<h2>Edit Student</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    First Name:
+    <input type="text" name="firstname" value="{{ student.firstname }}">
+
+    Last Name:
+    <input type="text" name="lastname" value="{{ student.lastname }}">
+
+    Matric No:
+    <input type="text" name="matric_no" value="{{ student.matric_no }}">
+
+    Email:
+    <input type="email" name="email" value="{{ student.email }}">
+
+    Department:
+    <select name="department">
+        {% for dept in departments %}
+            <option value="{{ dept.id }}"
+                {% if dept.id == student.department.id %}selected{% endif %}>
+                {{ dept.title }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Update</button>
+</form>
+</div>
+</body> 
+</html>
