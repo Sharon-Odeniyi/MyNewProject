@@ -19,6 +19,9 @@ class Student(models.Model):
         on_delete=models.PROTECT
     )
 
+    class Meta:
+        ordering = ["firstname", "lastname"]
+
     def __str__(self):
         return f"{self.firstname} {self.lastname} - {self.matric_no}"
 

@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Student, Department
@@ -45,11 +47,11 @@ def department(request):
 
 
 # =========================
-# SHOW FORM
+# ADD STUDENT FORM
 # =========================
 def student_form(request):
-    departments = Department.objects.all()
-    return render(request, 'student_form.html', {'departments': departments})
+    form = StudentForm()
+    return render(request, 'student_form.html', {'form': form})
 
 
 # =========================
@@ -60,14 +62,13 @@ def student_post(request):
         form = StudentForm(request.POST)
 
         if form.is_valid():
-            student = form.save(commit=False)
-
-
-            student.save()
+            form.save()
             messages.success(request, "Student added successfully.")
             return redirect("home")
 
-        messages.error(request, "Invalid form data.")
+
+        else:
+            messages.error(request, "Invalid form data.")
 
     return redirect("student_form")
 
@@ -78,30 +79,24 @@ def student_post(request):
 def student_edit(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
-    if request.method == 'POST':
-        student.firstname = request.POST.get('firstname')
-        student.lastname = request.POST.get('lastname')
-        student.matric_no = request.POST.get('matric_no')
-        student.email = request.POST.get('email')
-        student.level = calculate_level(student.matric_no)
+    if request.method == "POST":
+        form = StudentForm(request.POST, instance=student)
 
-        department_id = request.POST.get('department')
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student updated successfully.")
+            return redirect("home")
+        else:
+            messages.error(request, "Invalid form data.")
+    else:
+        form = StudentForm(instance=student)
 
-        try:
-            student.department = Department.objects.get(id=department_id)
-        except Department.DoesNotExist:
-            student.department = None
+    return render(request, "edit_student.html", {
+        "form": form,
+          "student": student
+          })
 
-       
 
-        student.save()
-        return redirect('home')
-
-    departments = Department.objects.all()
-    return render(request, 'edit_student.html', {
-        'student': student,
-        'departments': departments
-    })
 
 
 # =========================
@@ -109,5 +104,10 @@ def student_edit(request, pk):
 # =========================
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
-    student.delete()
-    return redirect('home')
+
+    if request.method == "POST":
+        student.delete()
+        messages.success(request, "Student deleted successfully.")
+        return redirect('home')
+
+    return render(request, 'delete_student.html', {'student': student})
